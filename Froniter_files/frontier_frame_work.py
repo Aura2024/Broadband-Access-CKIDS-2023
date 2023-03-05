@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 import time
 
+
 def plan_set(full_address: list[str]) -> dict:
     plan = {}
     serviced = True
@@ -37,6 +38,21 @@ def plan_set(full_address: list[str]) -> dict:
             time.sleep(.5)
             i.send_keys(Keys.ENTER)
 
+        # Checks to see if there is an existing customer page
+        try:
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "are-you-moving__text-block"))
+
+            )
+            moving = driver.find_elements(By.TAG_NAME, "button")
+            time.sleep(1)
+            # Click the "I'm moving here" button
+            for i in moving:
+                if moving.index(i) == 2:
+                    i.click()
+        except:
+            pass
+
         # Check if address is serviced
         try:
             WebDriverWait(driver, 10).until(
@@ -49,21 +65,6 @@ def plan_set(full_address: list[str]) -> dict:
         except:
             pass
         if serviced:
-            # Checks to see if there is an existing customer page
-            try:
-                WebDriverWait(driver, 10).until(
-                    EC.text_to_be_present_in_element((By.CLASS_NAME, "ButtonStyled-sc-nyrb95-0 bKOgHY are-you-moving__button btn"), "Yes, I'm moving")
-                    # presence_of_element_located((By.CLASS_NAME, "are-you-moving__address"))
-                )
-                moving = driver.find_elements(By.CLASS_NAME, "ButtonStyled-sc-nyrb95-0 bKOgHY are-you-moving__button btn")
-                time.sleep(0.5)
-                # Click the "I'm moving here" button
-                for i in moving:
-                    if moving.index(i) == 0:
-                        i.click()
-            except:
-                pass
-
             speeds_list = []
             prices_list = []
 
